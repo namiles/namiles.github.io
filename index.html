@@ -1,173 +1,797 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html lang="en">
 <head>
-    <!--- basic page needs
+    <!-- basic page needs
     ================================================== -->
     <meta charset="utf-8">
-    <title>Nick Miles</title>
+    <title>Nick Miles — Network Engineer</title>
     <meta name="description" content="Nick Miles is a Network Engineer based in Austin, TX, specializing in network administration, engineering, and automation.">
     <meta name="author" content="Nick Miles">
-    <!-- mobile specific metas
-    ================================================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- CSS
-    ================================================== -->
-    <link rel="stylesheet" href="css/styles-min.css">
-    <link rel="stylesheet" href="css/vendor-min.css">
-    <!-- script
-    ================================================== -->
-    <script defer src="js/vendor/fontawesome/all.min.js"></script>
+    <meta name="theme-color" content="#080b12">
     <!-- favicons
     ================================================== -->
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
+<style>
+  /* ============================================================
+   * "Topology" redesign — deliberately dark, single-world design.
+   * Self-contained: no external fonts or scripts.
+   * ============================================================ */
+  :root {
+    --bg:        #080b12;
+    --bg-2:      #0d1220;
+    --panel:     #10192b;
+    --panel-2:   #0c1424;
+    --line:      rgba(120, 220, 210, 0.12);
+    --line-2:    rgba(120, 220, 210, 0.22);
+    --ink:       #d3dcec;
+    --ink-dim:   #8996ac;
+    --ink-faint: #5b687e;
+    --accent:    #2fe0c0;
+    --accent-2:  #17b9d8;
+    --accent-dim:rgba(47, 224, 192, 0.14);
+    --up:        #46e08a;
+
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Monaco, "Cascadia Code", "Roboto Mono", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --fs-hero: clamp(2.9rem, 9.5vw, 7rem);
+    --fs-h2:   clamp(1.5rem, 3.5vw, 2.2rem);
+    --fs-h3:   clamp(1.05rem, 2vw, 1.25rem);
+    --fs-body: clamp(1rem, 1.15vw, 1.12rem);
+    --fs-mono: 0.82rem;
+
+    --maxw: 1080px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: #04120f; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.6rem; height: 1px;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  #net {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+  }
+  .hero::after {
+    /* vignette so text stays legible over the graph */
+    content: "";
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(120% 90% at 20% 40%, rgba(8,11,18,0.35) 0%, rgba(8,11,18,0.82) 62%, var(--bg) 100%);
+    pointer-events: none;
+  }
+  .hero__inner { position: relative; z-index: 2; }
+  .status {
+    font-family: var(--mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 1.1rem;
+    margin-bottom: 1.8rem;
+  }
+  .dot {
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: var(--up);
+    box-shadow: 0 0 0 0 rgba(70,224,138,0.6);
+    display: inline-block;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    animation: pulse 2.4s var(--ease) infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(70,224,138,0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(70,224,138,0); }
+    100% { box-shadow: 0 0 0 0 rgba(70,224,138,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-hero);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero__role {
+    font-family: var(--mono);
+    font-size: clamp(0.95rem, 2vw, 1.25rem);
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    margin: 1.4rem 0 0;
+  }
+  .hero__role b { color: var(--accent); font-weight: 500; }
+
+  .social { display: flex; gap: 0.75rem; margin-top: 2.2rem; }
+  .social a {
+    width: 2.9rem; height: 2.9rem;
+    display: grid; place-items: center;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    color: var(--ink-dim);
+    background: rgba(16, 25, 43, 0.5);
+    backdrop-filter: blur(3px);
+    transition: color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.25s var(--ease), background 0.25s var(--ease);
+  }
+  .social a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    transform: translateY(-3px);
+  }
+  .social svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
+
+  /* Hero load-in: staggered fade-up */
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes cueIn { from { opacity: 0; } to { opacity: 1; } }
+  .hero .status     { animation: heroIn 0.7s var(--ease) both; animation-delay: 0.15s; }
+  .hero h1          { animation: heroIn 0.8s var(--ease) both; animation-delay: 0.30s; }
+  .hero__role       { animation: heroIn 0.8s var(--ease) both; animation-delay: 0.48s; }
+  .hero .social     { animation: heroIn 0.8s var(--ease) both; animation-delay: 0.64s; }
+  .scrollcue        { animation: cueIn 1s ease both; animation-delay: 1s; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero .status, .hero h1, .hero__role, .hero .social, .scrollcue { animation: none; }
+  }
+
+  .scrollcue {
+    position: absolute; bottom: 1.6rem; left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-family: var(--mono);
+    font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  .scrollcue { transition: color 0.25s var(--ease); }
+  .scrollcue:hover { color: var(--accent); }
+  .scrollcue__arrow { width: 1.35rem; height: 1.35rem; fill: currentColor; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(5px);} }
+  @media (prefers-reduced-motion: reduce) { .scrollcue__arrow { animation: none; } }
+
+  /* Mobile: center the hero content */
+  @media (max-width: 640px) {
+    .hero__inner { text-align: center; }
+    .status { justify-content: center; }
+    .social { justify-content: center; }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section.block {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(4rem, 10vw, 7rem) 0;
+  }
+
+  /* Snap each full-height section into view on scroll.
+   * Guarded to tall-enough viewports so short/landscape screens
+   * (where content may exceed the viewport) never get trapped. */
+  @media (min-height: 680px) and (prefers-reduced-motion: no-preference) {
+    html { scroll-snap-type: y mandatory; }
+    .hero, section.block { scroll-snap-align: start; scroll-snap-stop: always; }
+  }
+  .block h2 {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0.9rem 0 0;
+    text-wrap: balance;
+  }
+
+  /* Panel with titlebar */
+  .panel {
+    margin-top: 2.4rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    overflow: hidden;
+  }
+  .panel__bar {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.8rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-dim);
+    background: rgba(255,255,255,0.015);
+  }
+  .panel__bar .lights { display: flex; gap: 0.4rem; }
+  .panel__bar .lights i { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: block; }
+  .panel__bar .lights i:nth-child(1){ background:#ff5f57; }
+  .panel__bar .lights i:nth-child(2){ background:#febc2e; }
+  .panel__bar .lights i:nth-child(3){ background:#28c840; }
+  .panel__bar .path { margin-left: 0.4rem; color: var(--ink-faint); }
+  .panel__body { padding: clamp(1.5rem, 4vw, 2.4rem); }
+  .panel__body p { margin: 0 0 1.1rem; max-width: none; color: var(--ink); }
+  .panel__body p:last-child { margin-bottom: 0; }
+  .panel__body strong { color: var(--ink); font-weight: 600; }
+  .cmdline {
+    font-family: var(--mono);
+    font-size: 0.84rem;
+    letter-spacing: 0.01em;
+    margin: 0 0 1.6rem !important;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
+    max-width: none !important;
+  }
+  .cmdline .pr { color: var(--accent); }
+  .cmdline .tilde { color: var(--accent-2); }
+  .cmdline .sym { color: var(--ink-faint); margin: 0 0.15ch; }
+  .cmdline .typed { color: var(--ink); }
+  .cmdline .typed::after {
+    content: "";
+    display: inline-block;
+    width: 0.6ch; height: 1em;
+    background: var(--accent);
+    margin-left: 0.4ch;
+    vertical-align: -0.15em;
+    animation: caret 1.05s steps(1) infinite;
+  }
+  @keyframes caret { 50% { opacity: 0; } }
+  /* while actively typing, the caret stays solid; it blinks once finished */
+  .cmdline .typed.typing::after { animation: none; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .cmdline .typed::after { animation: none; } }
+
+  /* Inventory grid */
+  .inv {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2.4rem;
+  }
+  .inv__cell { background: var(--panel-2); padding: 1.6rem 1.5rem; }
+  .inv__cell h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1.1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .inv__cell h3 .n {
+    color: var(--ink-faint);
+    margin-left: auto;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    padding: 0.34rem 0.7rem;
+    border: 1px solid var(--line-2);
+    border-radius: 7px;
+    background: rgba(47,224,192,0.04);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  /* Contact */
+  .contact { text-align: left; }
+  .contact-grid {
+    margin-top: 2.2rem;
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .contact .big {
+    font-size: clamp(1.6rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 14ch;
+  }
+  .contact-right { display: flex; flex-direction: column; gap: 1.6rem; }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .contact-email { margin: 0.5rem 0 0; }
+  .contact-email a {
+    font-family: var(--mono);
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-2);
+    transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .contact-email a:hover { color: var(--accent); border-color: var(--accent); }
+  .contact-btn { width: 100%; justify-content: center; }
+  @media (max-width: 800px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .contact .big { max-width: none; }
+  }
+  .btnrow { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+
+  /* TCP three-way handshake — "establishing a connection" */
+  .handshake {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.7rem, 2.5vw, 1.4rem);
+    margin: 2rem 0 0;
+    font-family: var(--mono);
+  }
+  .hs-node { display: flex; flex-direction: column; align-items: center; gap: 0.55rem; flex: 0 0 auto; }
+  .hs-label { font-size: 0.7rem; letter-spacing: 0.04em; color: var(--ink-dim); white-space: nowrap; }
+  .hs-dot {
+    width: 0.85rem; height: 0.85rem; border-radius: 50%;
+    background: var(--ink-faint);
+    box-shadow: 0 0 0 4px rgba(120,220,210,0.05);
+  }
+  .hs-wire {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 48px;
+    height: 2px;
+    background: var(--line-2);
+    border-radius: 2px;
+  }
+  .hs-packet, .hs-status {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    border-radius: 5px;
+    background: var(--panel);
+    opacity: 0;
+  }
+  .hs-packet {
+    left: 0;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid var(--line-2);
+    padding: 0.18rem 0.46rem;
+    box-shadow: 0 0 12px rgba(47,224,192,0.25);
+  }
+  .hs-status {
+    left: 50%;
+    font-size: 0.64rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--up);
+    padding: 0.2rem 0.6rem;
+  }
+  @keyframes pktRight { 0%{ left:0%; opacity:0; } 12%{ opacity:1; } 88%{ opacity:1; } 100%{ left:100%; opacity:0; } }
+  @keyframes pktLeft  { 0%{ left:100%; opacity:0; } 12%{ opacity:1; } 88%{ opacity:1; } 100%{ left:0%; opacity:0; } }
+  @keyframes hsStatusIn { from{ opacity:0; transform:translate(-50%,-25%); } to{ opacity:1; transform:translate(-50%,-50%); } }
+  @keyframes hsDotOn { to { background: var(--up); box-shadow: 0 0 0 4px rgba(70,224,138,0.14), 0 0 14px rgba(70,224,138,0.7); } }
+  .handshake.run .hs-packet[data-step="1"] { animation: pktRight 1s var(--ease) 0.30s both; }
+  .handshake.run .hs-packet[data-step="2"] { animation: pktLeft  1s var(--ease) 1.30s both; }
+  .handshake.run .hs-packet[data-step="3"] { animation: pktRight 1s var(--ease) 2.30s both; }
+  .handshake.run .hs-status              { animation: hsStatusIn 0.5s var(--ease) 3.30s both; }
+  .handshake.run .hs-node--a .hs-dot     { animation: hsDotOn 0.4s var(--ease) 0.30s both; }
+  .handshake.run .hs-node--b .hs-dot     { animation: hsDotOn 0.4s var(--ease) 3.30s both; }
+  @media (prefers-reduced-motion: reduce) {
+    .handshake .hs-packet { display: none; }
+    .handshake .hs-status { opacity: 1; animation: none; }
+    .handshake .hs-dot { background: var(--up); box-shadow: 0 0 12px rgba(70,224,138,0.6); animation: none; }
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1.3rem;
+    border-radius: 9px;
+    border: 1px solid var(--line-2);
+    color: var(--ink);
+    transition: all 0.25s var(--ease);
+  }
+  .btn svg { width: 1rem; height: 1rem; fill: currentColor; }
+  .btn--primary { background: var(--accent); color: #04120f; border-color: var(--accent); font-weight: 600; }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -12px var(--accent); }
+  .btn--ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  /* Footer — lives inside the last full-height section so scroll-snap
+   * doesn't strand it past the final snap point. */
+  section.contact { padding-bottom: 1.5rem; }
+  .contact > .wrap { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+  .contact > footer { flex: 0 0 auto; }
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 1.3rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+  footer .foot-social { display: flex; gap: 1rem; }
+  footer .foot-social a { color: var(--ink-dim); transition: color 0.2s var(--ease); }
+  footer .foot-social a:hover { color: var(--accent); }
+  footer .foot-social svg { width: 1.05rem; height: 1.05rem; fill: currentColor; vertical-align: middle; }
+
+  /* reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+</style>
 </head>
 
-<body id="top" class="ss-preload">
-    <!-- preloader -->
-    <div id="preloader">
-        <div id="loader"></div>
-    </div>
-    <!-- header -->
-    <header class="s-header">
-        <a class="s-header__menu-toggle" href="#0" title="Menu">
-            <span class="s-header__menu-icon"></span>
+<body>
+<main>
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <canvas id="net"></canvas>
+    <div class="wrap hero__inner">
+      <p class="status">
+        <span><span class="dot"></span>Online</span>
+        <span>Austin, TX</span>
+      </p>
+      <h1>Hi, I'm <span class="accent">Nick.</span></h1>
+      <p class="hero__role">// <b>Network Engineer</b></p>
+      <div class="social">
+        <a href="https://www.linkedin.com/in/nickamiles/" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.02h4.52V24H.24V8.02zM8.34 8.02h4.33v2.18h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.02 5.42 6.94V24h-4.52v-6.3c0-1.5-.03-3.44-2.1-3.44-2.1 0-2.42 1.64-2.42 3.33V24H8.34V8.02z"/></svg>
         </a>
-    </header> <!-- end s-header -->
-    <!-- hero -->
-    <section id="hero" class="s-hero target-section">
-        <!-- <div class="s-hero__bg rellax" data-rellax-speed="-7"></div> -->
-        <div class="row s-hero__content">
-            <div class="column">
-                <div class="s-hero__content-about">
-                    <h1>Hi, I'm Nick.</h1>
+        <a href="https://github.com/namiles" aria-label="GitHub" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.24-.02-2.25-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.92 1.23 3.23 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.7.82.58C20.56 22.29 24 17.8 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+        </a>
+      </div>
+    </div>
+    <a href="#about" class="scrollcue">
+      <span>Scroll</span>
+      <svg class="scrollcue__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16.5 5.5 10l1.4-1.4 5.1 5.1 5.1-5.1L18.5 10 12 16.5z"/></svg>
+    </a>
+  </header>
 
-                    <h3>
-                        Network Engineer
-                    </h3>
-
-                    <div class="s-hero__content-social">
-                        <a href="https://www.linkedin.com/in/nickamiles/"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
-                        <a href="https://github.com/namiles"><i class="fab fa-github" aria-hidden="true"></i></a>
-                    </div>
-                </div> <!-- end s-hero__content-about -->
-            </div>
-        </div> <!-- s-hero__content -->
-        <div class="s-hero__scroll">
-            <a href="#about" class="s-hero__scroll-link smoothscroll">
-                <span class="scroll-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:rgba(0, 0, 0, 1);"><path d="M18.707 12.707L17.293 11.293 13 15.586 13 6 11 6 11 15.586 6.707 11.293 5.293 12.707 12 19.414z"></path></svg>
-                </span>
-                <span class="scroll-text">Scroll Down</span>
+  <!-- ===================== ABOUT ===================== -->
+  <section class="block" id="about">
+    <div class="wrap reveal">
+      <span class="eyebrow">01 — About</span>
+      <div class="panel">
+        <div class="panel__bar">
+          <span class="lights"><i></i><i></i><i></i></span>
+          <span class="path">rtr1.nickmiles.io</span>
+        </div>
+        <div class="panel__body">
+          <p class="cmdline"><span class="pr">nick@rtr1.nickmiles.io</span> <span class="tilde">~</span> <span class="sym">$</span> <span class="typed">cat about.txt</span></p>
+          <p>
+            Network Engineer based in <strong>Austin, TX</strong>, specializing in network
+            administration, engineering, and automation. I hold the Cisco Certified Specialist (Enterprise Core), CCNA, CCNA Automation,
+            Security+, and 2× JNCIA certifications,
+            along with a B.S. in Information Technology.
+          </p>
+          <p>
+            Experience spans the full stack of network operations — routing, switching, wireless,
+            next-generation firewalls, and multi-vendor platforms including Cisco IOS/IOS-XE,
+            Arista EOS, and Juniper JUNOS. Automation related work with includes Ansible, Python,
+            NETCONF, RESTCONF, YANG, and REST APIs, and more.
+          </p>
+          <div class="btnrow" style="margin-top:1.8rem;">
+            <a class="btn btn--primary" href="https://drive.google.com/file/d/1l_QVUZMxrdp6m3l76Zvqu04etmVQvG2w/view?usp=sharing" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16l4-5h-3V4h-2v7H8l4 5zm8 2H4v-7H2v7c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-7h-2v7z"/></svg>
+              View My Resume
             </a>
-        </div> <!-- s-hero__scroll -->
-    </section> <!-- end s-hero -->
-
-    <!-- About -->
-    <section id="about" class="s-about target-section">
-
-        <div class="row">
-            <!-- <div class="column large-3 tab-12">
-                <img class="s-about__pic" src="images/main2.png" alt="">
-            </div> -->
-            <div class="column large-12 tab-12 s-about__content">
-                <h3>About Me</h3>
-                <p>
-                   Network Engineer based in Austin, TX, specializing in network administration, engineering, and automation. I hold the CCNA, CCNA Automation, Security+, Cisco Certified Specialist (Enterprise Core), and 2x JNCIA certifications, along with a B.S. in Information Technology.
-                </p>
-                <p>
-                    Experience spans the full stack of network operations &mdash; routing, switching, wireless, next-generation firewalls, and multi-vendor platforms including Cisco IOS/IOS-XE, Arista EOS, and Juniper JUNOS. Tooling and automation related experience includes work with Ansible, Python, NETCONF, RESTCONF, YANG, REST APIs, and more to make networks more scalable and reliable while also easing operational tasks.
-                </p>
-                <hr>
-                <div class="row s-about__content-bottom">
-                    <div class="column w-1000-stack">
-                        <a href="https://drive.google.com/file/d/1l_QVUZMxrdp6m3l76Zvqu04etmVQvG2w/view?usp=sharing" target="_blank" class="btn btn--download">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:rgba(0, 0, 0, 1);"><path d="M12 16L16 11 13 11 13 4 11 4 11 11 8 11z"></path><path d="M20,18H4v-7H2v7c0,1.103,0.897,2,2,2h16c1.103,0,2-0.897,2-2v-7h-2V18z"></path></svg>
-                            View My Resume
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- end row -->
-
-    </section> <!-- end s-about -->
-
-    <!-- Contact -->
-    <section id="contact" class="s-contact target-section">
-        <div class="row s-contact__header">
-            <div class="column large-12">
-                <h3 class="section-header-allcaps">Ping Me</h3>
-            </div>
+            <a class="btn btn--ghost" href="https://www.credly.com/users/nicholasamiles/badges/credly" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.68 13.69 12 11.93l2.31 1.76-.88-2.85L15.75 9h-2.84L12 6.19 11.09 9H8.25l2.31 1.84-.88 2.85zM20 10c0-4.42-3.58-8-8-8s-8 3.58-8 8c0 2.03.76 3.87 2 5.28V23l6-2 6 2v-7.72c1.24-1.41 2-3.25 2-5.28zm-8-6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6z"/></svg>
+              View My Certifications
+            </a>
+          </div>
         </div>
-        <div class="row s-contact__content">
+      </div>
+    </div>
+  </section>
 
-            <div class="column large-7 medium-12">
-                <h4 class="huge-text">
-                Looking to establish a connection?
-                </h4>
-            </div>
-            <div class="column large-4 medium-12">
-                <div class="row contact-infos">
-                    <div class="column large-12 medium-6 tab-12">
-                        <div class="contact-block">
-                            <h5 class="contact-block__header">
-                                Email
-                            </h5>
-                            <p class="contact-block__content">
-                                <a class="mailtoui" href="mailto:nick@nickmiles.io">nick@nickmiles.io</a>
-                            </p>
-                        </div> <!-- end contact-block -->
-                    </div>
-                    <div class="column large-12">
-                        <a href="mailto:nick@nickmiles.io" class="mailtoui btn btn--primary h-full-width">Email Me</a>
-                    </div>
-                </div> <!-- end contact-infos -->
-            </div>
-        </div> <!-- s-contact__content -->
-    </section> <!-- end s-contact -->
-    
+  <!-- ===================== CONTACT ===================== -->
+  <section class="block contact" id="contact">
+    <div class="wrap reveal">
+      <span class="eyebrow">02 — Ping Me</span>
 
-    <!-- footer -->
-    <footer class="s-footer">
-        <div class="row">
-            <div class="column large-4 medium-6 w-1000-stack s-footer__social-block">
-                <ul class="s-footer__social">
-                    <li><a href="https://www.linkedin.com/in/nickamiles/"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></li>
-                    <li><a href="https://github.com/namiles"><i class="fab fa-github" aria-hidden="true"></i></a></li>
-                </ul>
+      <div class="contact-grid">
+        <div class="contact-left">
+          <h2 class="big">Looking to establish a connection?</h2>
+          <div class="handshake" aria-hidden="true">
+            <div class="hs-node hs-node--a">
+              <span class="hs-dot"></span>
+              <span class="hs-label">you</span>
             </div>
-            <div class="column large-7 medium-6 w-1000-stack ss-copyright">
-                <span>Nick Miles</span>
+            <div class="hs-wire">
+              <span class="hs-packet" data-step="1">SYN</span>
+              <span class="hs-packet" data-step="2">SYN-ACK</span>
+              <span class="hs-packet" data-step="3">ACK</span>
+              <span class="hs-status">● connection established</span>
             </div>
+            <div class="hs-node hs-node--b">
+              <span class="hs-dot"></span>
+              <span class="hs-label">nick</span>
+            </div>
+          </div>
         </div>
-        <div class="ss-go-top">
-            <a class="smoothscroll" title="Back to Top" href="#top">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 4h12v2H6zm5 10v6h2v-6h5l-6-6-6 6z"/></svg>
-             </a>
-        </div> <!-- end ss-go-top -->
+        <div class="contact-right">
+          <div class="contact-block">
+            <span class="contact-label">Email</span>
+            <p class="contact-email"><a href="mailto:nick@nickmiles.io">nick@nickmiles.io</a></p>
+          </div>
+          <a class="btn btn--primary contact-btn" href="mailto:nick@nickmiles.io">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            Email Me
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="wrap">
+      <span>© <span id="yr"></span> Nick Miles · nickmiles.io</span>
+      <span class="foot-social">
+        <a href="https://www.linkedin.com/in/nickamiles/" aria-label="LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.02h4.52V24H.24V8.02zM8.34 8.02h4.33v2.18h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.02 5.42 6.94V24h-4.52v-6.3c0-1.5-.03-3.44-2.1-3.44-2.1 0-2.42 1.64-2.42 3.33V24H8.34V8.02z"/></svg></a>
+        <a href="https://github.com/namiles" aria-label="GitHub" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.24-.02-2.25-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.92 1.23 3.23 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.7.82.58C20.56 22.29 24 17.8 24 12.5 24 5.87 18.63.5 12 .5z"/></svg></a>
+      </span>
+      </div>
     </footer>
+  </section>
+</main>
 
-    <!-- Javascript -->
-    <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/vantajs//three.r119.min.js"></script>
-    <script src="js/vantajs/vanta.net.min.js"></script>
-    <script>
-        VANTA.NET({
-        el: ".s-hero",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
-        color: 0x282e3e,
-        backgroundColor: 0x1b1f29,
-        spacing: 18.00
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ---------- scroll reveal ---------- */
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.14 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+
+  /* ---------- type "cat about.txt" when About scrolls into view ---------- */
+  (function () {
+    var el = document.querySelector('.cmdline .typed');
+    var about = document.querySelector('#about');
+    if (!el || !about) return;
+
+    var full = el.textContent;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return; // leave full text as-is
+
+    el.textContent = '';
+    el.classList.add('typing');
+    var started = false;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting && !started) {
+          started = true;
+          io.unobserve(en.target);
+          type();
+        }
+      });
+    }, { threshold: 0.55 });
+    io.observe(about);
+
+    function type() {
+      var i = 0;
+      (function tick() {
+        el.textContent = full.slice(0, i);
+        if (i < full.length) {
+          i++;
+          setTimeout(tick, 50 + Math.random() * 55);
+        } else {
+          el.classList.remove('typing'); // resume blinking caret
+        }
+      })();
+    }
+  })();
+
+  /* ---------- TCP handshake: play when Ping Me scrolls into view ---------- */
+  (function () {
+    var hs = document.querySelector('.handshake');
+    if (!hs) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return; // CSS shows the final "established" state
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          hs.classList.remove('run');
+          void hs.offsetWidth; // force reflow so the animation restarts
+          hs.classList.add('run');
+        } else {
+          hs.classList.remove('run');
+        }
+      });
+    }, { threshold: 0.5 });
+    io.observe(hs);
+  })();
+
+  /* ---------- network topology canvas ---------- */
+  (function () {
+    var canvas = document.getElementById('net');
+    var ctx = canvas.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0, nodes = [], links = [], packets = [], mouse = { x: -9999, y: -9999 };
+    var LINK_DIST = 150;
+    var raf;
+
+    function resize() {
+      var hero = canvas.parentElement;
+      w = hero.clientWidth; h = hero.clientHeight;
+      canvas.width = w * DPR; canvas.height = h * DPR;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      build();
+    }
+
+    function build() {
+      var count = Math.round(Math.min(90, Math.max(26, (w * h) / 17000)));
+      nodes = [];
+      for (var i = 0; i < count; i++) {
+        nodes.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.22,
+          vy: (Math.random() - 0.5) * 0.22,
+          r: Math.random() * 1.6 + 1.1,
+          hub: Math.random() < 0.12
         });
-    </script>
+      }
+      packets = [];
+    }
+
+    function spawnPacket() {
+      if (!links.length) return;
+      var l = links[(Math.random() * links.length) | 0];
+      packets.push({ a: l.a, b: l.b, t: 0, sp: 0.006 + Math.random() * 0.01 });
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+
+      // move
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        if (!reduce) { n.x += n.vx; n.y += n.vy; }
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+        // gentle mouse repel
+        var dx = n.x - mouse.x, dy = n.y - mouse.y, d = Math.hypot(dx, dy);
+        if (d < 140 && d > 0.01) { n.x += (dx / d) * (140 - d) * 0.012; n.y += (dy / d) * (140 - d) * 0.012; }
+      }
+
+      // links
+      links = [];
+      for (var a = 0; a < nodes.length; a++) {
+        for (var b = a + 1; b < nodes.length; b++) {
+          var na = nodes[a], nb = nodes[b];
+          var ddx = na.x - nb.x, ddy = na.y - nb.y;
+          var dist = Math.hypot(ddx, ddy);
+          if (dist < LINK_DIST) {
+            var near = Math.min(Math.hypot((na.x + nb.x) / 2 - mouse.x, (na.y + nb.y) / 2 - mouse.y), 999);
+            var glow = near < 130 ? (1 - near / 130) : 0;
+            var alpha = (1 - dist / LINK_DIST) * 0.5 + glow * 0.5;
+            ctx.strokeStyle = 'rgba(47,224,192,' + (alpha * 0.85).toFixed(3) + ')';
+            ctx.lineWidth = 0.75 + glow * 0.9;
+            ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y); ctx.stroke();
+            links.push({ a: na, b: nb });
+          }
+        }
+      }
+
+      // packets
+      if (!reduce && Math.random() < 0.04) spawnPacket();
+      for (var p = packets.length - 1; p >= 0; p--) {
+        var pk = packets[p]; pk.t += pk.sp;
+        if (pk.t >= 1) { packets.splice(p, 1); continue; }
+        var px = pk.a.x + (pk.b.x - pk.a.x) * pk.t;
+        var py = pk.a.y + (pk.b.y - pk.a.y) * pk.t;
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(70,224,138,0.95)';
+        ctx.shadowColor = 'rgba(70,224,138,0.9)'; ctx.shadowBlur = 8;
+        ctx.arc(px, py, 1.9, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      // nodes
+      for (var k = 0; k < nodes.length; k++) {
+        var nd = nodes[k];
+        ctx.beginPath();
+        if (nd.hub) {
+          ctx.fillStyle = 'rgba(47,224,192,0.95)';
+          ctx.shadowColor = 'rgba(47,224,192,0.8)'; ctx.shadowBlur = 10;
+          ctx.arc(nd.x, nd.y, nd.r + 0.8, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.fillStyle = 'rgba(165,212,225,0.9)';
+          ctx.arc(nd.x, nd.y, nd.r, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      if (!reduce) raf = requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', resize);
+    canvas.parentElement.addEventListener('pointermove', function (e) {
+      var rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top;
+    });
+    canvas.parentElement.addEventListener('pointerleave', function () { mouse.x = -9999; mouse.y = -9999; });
+
+    resize();
+    step(); // in reduce mode this draws a single static frame and does not reschedule
+  })();
+</script>
 </body>
 </html>
